@@ -1,7 +1,5 @@
 // AUTHOR: MITCHELL REVERS, WITH ADDITIONAL CODE PROVIDED BY DAVID BALKCOM
 
-
-
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
