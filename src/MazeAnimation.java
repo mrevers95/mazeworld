@@ -14,9 +14,9 @@ public class MazeAnimation extends JPanel {
 	private List<UUSearchProblem.UUSearchNode> path;
 	private int step = 0;	
 	
-	public MazeAnimation(Maze m, List<UUSearchProblem.UUSearchNode> p) {
-		this.maze = m;
-		this.path = p;
+	public MazeAnimation(Maze maze, List<UUSearchProblem.UUSearchNode> path) {
+		this.maze = maze;
+		this.path = path;
 		this.setPreferredSize(new Dimension(frameWidth, frameHeight));
 		Thread mazeThread = new MazeThread();
 		mazeThread.start();

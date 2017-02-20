@@ -29,9 +29,9 @@ public abstract class UUSearchProblem {
 	public class NodeKey {	
 		UUSearchNode previous;
 		int priority;
-		public NodeKey(UUSearchNode prev, int prior) {
-			previous = prev;
-			priority = prior;
+		public NodeKey(UUSearchNode previous, int priority) {
+			this.previous = previous;
+			this.priority = priority;
 		}
 	}
 	
@@ -39,9 +39,10 @@ public abstract class UUSearchProblem {
 		resetStats();
 		
 		// set up data structures
-		PriorityQueue<UUSearchNode> frontier = new PriorityQueue<UUSearchNode>();
+		PriorityQueue<UUSearchNode> frontier = new PriorityQueue<>();
 		frontier.add(startNode);
-		HashMap<UUSearchNode, NodeKey> explored = new HashMap<UUSearchNode, NodeKey>();
+		
+		HashMap<UUSearchNode, NodeKey> explored = new HashMap<>();
 		explored.put(startNode, new NodeKey(null, startNode.priority()));
 		
 		// loop while priority queue is not empty
@@ -108,7 +109,7 @@ public abstract class UUSearchProblem {
 			HashMap<UUSearchNode, UUSearchNode> visited) {
 		
 		// set up data structures
-		LinkedList<UUSearchNode> chain = new LinkedList<UUSearchNode>();
+		LinkedList<UUSearchNode> chain = new LinkedList<>();
 		UUSearchNode current = node;
 		
 		// backchain through the hashmap starting with current node
@@ -124,7 +125,7 @@ public abstract class UUSearchProblem {
 			HashMap<UUSearchNode, NodeKey> visited) {
 			
 		// set up data structures
-		LinkedList<UUSearchNode> chain = new LinkedList<UUSearchNode>();
+		LinkedList<UUSearchNode> chain = new LinkedList<>();
 		UUSearchNode current = node;
 		
 		// backchain through the hashmap starting with current node

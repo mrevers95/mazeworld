@@ -59,8 +59,7 @@ public class Maze {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				if (isEmptyCell(i, j)) {
-					Point coord = new Point(i, j);
-					sxy.add(coord);
+					sxy.add(new Point(i, j));
 				}
 			}
 		}
@@ -68,22 +67,7 @@ public class Maze {
 	}
 	
 	public boolean isEmptyCell(int x, int y) {
-		if (x >= 0 && y >= 0 && x < this.width && y < this.height) {
-			return (cells[y][x] != '#');
-		}
-		return false;
-	}
-	
-	public String toString() {
-		String maze = "";
-		for (int i = height-1; i >= 0; i--) {
-			for (int j = 0; j < width; j++) {
-				maze += cells[i][j];
-			}
-			if (i != 0) 
-				maze += "\n";
-		}
-		return maze;
+		return x >= 0 && y >= 0 && x < width && y < height && cells[y][x] != '#';
 	}
 	
 	public void paintMaze(Graphics g) {

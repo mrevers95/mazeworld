@@ -11,10 +11,9 @@ public class BlindRobotProblem extends UUSearchProblem {
 	private Point goal;
 	
 	public BlindRobotProblem(int gx, int gy, Maze m) {
-		Set<Point> empties = m.getEmptyCells();
-		startNode = new BlindRobotNode(empties, 0);
-		goal = new Point(gx, gy);
-		maze = m;
+		this.startNode = new BlindRobotNode(m.getEmptyCells(), 0);
+		this.goal = new Point(gx, gy);
+		this.maze = m;
 	}
 	
 	public class BlindRobotNode implements UUSearchNode {
@@ -22,10 +21,9 @@ public class BlindRobotProblem extends UUSearchProblem {
 		private Set<Point> state;
 		private int cost;
 		
-		public BlindRobotNode(Set<Point> xy, int c) {
-			state = new HashSet<Point>();
+		public BlindRobotNode(Set<Point> xy, int cost) {
 			this.state = xy;
-			cost = c;
+			this.cost = cost;
 		}
 
 		@Override
@@ -37,12 +35,10 @@ public class BlindRobotProblem extends UUSearchProblem {
 					int x = s.x + Maze.moves[j][0];
 					int y = s.y + Maze.moves[j][1];
 					if (maze.isEmptyCell(x, y)) {
-						Point xy = new Point(x, y);	
-						updatedXY.add(xy);
+						updatedXY.add(new Point(x, y));
 					}
-					else {
-						Point xy = new Point(s.x, s.y);	
-						updatedXY.add(xy);
+					else {	
+						updatedXY.add(new Point(s.x, s.y));
 					}
 				}
 				if (updatedXY.size() > 0) {
@@ -55,30 +51,12 @@ public class BlindRobotProblem extends UUSearchProblem {
 		
 		@Override
 		public boolean goalTest() {
-			return (state.size() == 1 && state.iterator().next().equals(goal));
-		}
-		
-		@Override
-		public String toString() {
-			String str = "{";
-			Iterator<Point> states = this.state.iterator();
-			while (states.hasNext()) {
-				Point s = states.next();
-				str += "[" + s.x + ", " + s.y + "]";
-				if (states.hasNext()) {
-					str += ", ";
-				}
-				else {
-					str += "}";
-				}
-			}
-			return str;
+			return state.size() == 1 && state.iterator().next().equals(goal);
 		}
 		
 		@Override
 		public boolean equals(Object other) {
-			Set<Point> b = ((BlindRobotNode) other).state;
-			return this.state.equals(b);
+			return state.equals(((BlindRobotNode) other).state);
 		}
 		
 		@Override
@@ -92,11 +70,11 @@ public class BlindRobotProblem extends UUSearchProblem {
 		}
 		
 		public int priority() {
-			if (this.state.size() > 1) {
-				int heuristic = this.state.size()*maze.height*10000;
+			int heuristic = maze.height*10000;
+			if (state.size() > 1) {
+				heuristic = state.size()*maze.height*10000;
 				return heuristic + cost;
 			}
-			int heuristic = maze.height*10000;
 			for (Point p : state) {
 				int xdist = goal.x - p.x;
 				int ydist = goal.y - p.y;
@@ -105,26 +83,13 @@ public class BlindRobotProblem extends UUSearchProblem {
 			}
 			return heuristic + cost;
 		}
-		
-		/*
-		public int priority() {
-			int heuristic = maze.height*10000;
-			for (Point p : state) {
-				int xdist = goal.x - p.x;
-				int ydist = goal.y - p.y;
-				int xydist = Math.abs(xdist) + Math.abs(ydist);
-				if (xydist < heuristic) heuristic = xydist;
-			}
-			return heuristic + cost;
-		}
-		*/
 		
 		@Override
 		public int compareTo(UUSearchNode n) {
-			if (this.priority() > n.priority()) {
+			if (priority() > n.priority()) {
 				return 1;
 			}
-			else if (this.priority() < n.priority()) {
+			else if (priority() < n.priority()) {
 				return -1;
 			}
 			return 0;
@@ -139,6 +104,22 @@ public class BlindRobotProblem extends UUSearchProblem {
 			return list;
 		}
 		
+		@Override
+		public String toString() {
+			String str = "{";
+			Iterator<Point> states = state.iterator();
+			while (states.hasNext()) {
+				Point s = states.next();
+				str += "[" + s.x + ", " + s.y + "]";
+				if (states.hasNext()) {
+					str += ", ";
+				}
+				else {
+					str += "}";
+				}
+			}
+			return str;
+		}
+		
 	}
-	
 }

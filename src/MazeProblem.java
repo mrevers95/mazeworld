@@ -7,10 +7,10 @@ public class MazeProblem extends UUSearchProblem {
 	private Point goal;
 	private Maze maze;
 	
-	public MazeProblem(int sx, int sy, int gx, int gy, Maze m) {
-		startNode = new MazeNode(sx, sy, 0);
-		goal = new Point(gx, gy);
-		maze = m;
+	public MazeProblem(int sx, int sy, int gx, int gy, Maze maze) {
+		this.startNode = new MazeNode(sx, sy, 0);
+		this.goal = new Point(gx, gy);
+		this.maze = maze;
 	}
 	
 	public class MazeNode implements UUSearchNode {
@@ -18,17 +18,17 @@ public class MazeProblem extends UUSearchProblem {
 		private Point state;
 		private int cost;
 		
-		public MazeNode(int x, int y, int c) {
-			state = new Point(x, y);
-			this.cost = c;
+		public MazeNode(int x, int y, int cost) {
+			this.state = new Point(x, y);
+			this.cost = cost;
 		}
 
 		@Override
 		public ArrayList<UUSearchNode> getSuccessors() {
-			ArrayList<UUSearchNode> successors = new ArrayList<UUSearchNode>();
+			ArrayList<UUSearchNode> successors = new ArrayList<>();
 			for (int i = 0; i < Maze.moves.length; i++) {
-				int updatedX = this.state.x + Maze.moves[i][0];
-				int updatedY = this.state.y + Maze.moves[i][1];
+				int updatedX = state.x + Maze.moves[i][0];
+				int updatedY = state.y + Maze.moves[i][1];
 				if (maze.isEmptyCell(updatedX, updatedY)) {
 					successors.add(new MazeNode(updatedX, updatedY, cost+1));
 				} 
@@ -38,12 +38,12 @@ public class MazeProblem extends UUSearchProblem {
 
 		@Override
 		public boolean goalTest() {
-			return (this.state.equals(goal));
+			return (state.equals(goal));
 		}
 		
 		@Override
 		public String toString() {
-			String str = "[" + this.state.x + ", " + this.state.y +"]";
+			String str = "[" + state.x + ", " + state.y +"]";
 			return str;
 		}
 		
@@ -67,10 +67,10 @@ public class MazeProblem extends UUSearchProblem {
 
 		@Override
 		public int compareTo(UUSearchNode n) {
-			if (this.priority() > n.priority()) {
+			if (priority() > n.priority()) {
 				return 1;
 			}
-			else if (this.priority() < n.priority()) {
+			else if (priority() < n.priority()) {
 				return -1;
 			}
 			return 0;

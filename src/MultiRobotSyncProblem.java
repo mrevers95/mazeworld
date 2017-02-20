@@ -7,10 +7,10 @@ public class MultiRobotSyncProblem extends UUSearchProblem {
 	private Maze maze;
 	private List<Point> goal;
 	
-	public MultiRobotSyncProblem(List<Point> sxy, List<Point> gxy, Maze m) {
-		startNode = new MultiRobotSyncNode(sxy, 0);
-		goal = gxy;
-		maze = m;
+	public MultiRobotSyncProblem(List<Point> sxy, List<Point> goal, Maze maze) {
+		this.startNode = new MultiRobotSyncNode(sxy, 0);
+		this.goal = goal;
+		this.maze = maze;
 	}
 	
 	public class MultiRobotSyncNode implements UUSearchNode {
@@ -18,23 +18,22 @@ public class MultiRobotSyncProblem extends UUSearchProblem {
 		private int cost;
 		private List<Point> state;
 		
-		public MultiRobotSyncNode(List<Point> xy, int c) {
-			state = new ArrayList<Point>();
-			this.state = xy;
-			cost = c;
+		public MultiRobotSyncNode(List<Point> state, int cost) {
+			this.state = state;
+			this.cost = cost;
 		}
 		
 		@Override
 		public ArrayList<UUSearchNode> getSuccessors() {
-			ArrayList<UUSearchNode> successors = new ArrayList<UUSearchNode>();
+			ArrayList<UUSearchNode> successors = new ArrayList<>();
 			
 			// make a list of possible moves for each robot
-			List<List<Point>> possibleMoves = new ArrayList<List<Point>>();
+			List<List<Point>> possibleMoves = new ArrayList<>();
 			for (int i = 0; i < state.size(); i++) {
-				List<Point> list = new ArrayList<Point>();
+				List<Point> list = new ArrayList<>();
 				for (int j = 0; j < Maze.moves.length; j++) {
-					int updatedX = this.state.get(i).x + Maze.moves[j][0];
-					int updatedY = this.state.get(i).y + Maze.moves[j][1];
+					int updatedX = state.get(i).x + Maze.moves[j][0];
+					int updatedY = state.get(i).y + Maze.moves[j][1];
 					if (maze.isEmptyCell(updatedX, updatedY)) {
 						list.add(new Point(updatedX, updatedY));
 					}
@@ -43,14 +42,15 @@ public class MultiRobotSyncProblem extends UUSearchProblem {
 			}
 			
 			// generate all permutations from the moves above recursively
-			List<Point> current = new ArrayList<Point>();
+			List<Point> current = new ArrayList<>();
 			generatePermutations(possibleMoves, successors, 0, current);
 			
 			return successors;
 		}
 		
 		public void generatePermutations(List<List<Point>> possibleMoves, 
-				ArrayList<UUSearchNode> successors, int index, List<Point> current) {
+				ArrayList<UUSearchNode> successors, int index, List<Point> current)
+		{
 			// base case
 			if (index == state.size()) {
 				successors.add(new MultiRobotSyncNode(current, cost+1));
@@ -58,7 +58,7 @@ public class MultiRobotSyncProblem extends UUSearchProblem {
 			}
 			// recursive case
 			for (int i = 0; i < possibleMoves.get(index).size(); i++) {
-				List<Point> updatedCurrent = new ArrayList<Point>();
+				List<Point> updatedCurrent = new ArrayList<>();
 				updatedCurrent.addAll(current);
 				// check if robots are on same space
 				if (updatedCurrent.contains(possibleMoves.get(index).get(i))) {
@@ -70,8 +70,8 @@ public class MultiRobotSyncProblem extends UUSearchProblem {
 		}
 		
 		public boolean isOccupiedCell(int x, int y) {
-			for (int i = 0; i < this.state.size(); i++) {
-				if (x == this.state.get(i).x && y == this.state.get(i).y) {
+			for (int i = 0; i < state.size(); i++) {
+				if (x == state.get(i).x && y == state.get(i).y) {
 					return true;
 				}
 			}
@@ -84,21 +84,6 @@ public class MultiRobotSyncProblem extends UUSearchProblem {
 		}
 		
 		@Override
-		public String toString() {
-			String str = "{";
-			for (int i = 0; i < this.state.size(); i++) {
-				str += ("[" + this.state.get(i).x + ", " + this.state.get(i).y + "]");
-				if (i != this.state.size() - 1) {
-					str += " ";
-				}
-				else {
-					str += "}";
-				}
-			}
-			return str;
-		}
-		
-		@Override
 		public boolean equals(Object other) {
 			return state.equals(((MultiRobotSyncNode) other).state); 	
 		}
@@ -106,7 +91,7 @@ public class MultiRobotSyncProblem extends UUSearchProblem {
 		@Override
 		public int hashCode() {
 			int sum = 0;
-			for (int j = 0; j < this.state.size(); j++) {
+			for (int j = 0; j < state.size(); j++) {
 				sum = state.get(j).x*10^(j*2) +  state.get(j).y*10^(j*2+1); 
 			}
 			return sum;
@@ -114,10 +99,10 @@ public class MultiRobotSyncProblem extends UUSearchProblem {
 		
 		@Override
 		public int compareTo(UUSearchNode n) {
-			if (this.priority() > n.priority()) {
+			if (priority() > n.priority()) {
 				return 1;
 			}
-			else if (this.priority() < n.priority()) {
+			else if (priority() < n.priority()) {
 				return -1;
 			}
 			return 0;
@@ -126,7 +111,7 @@ public class MultiRobotSyncProblem extends UUSearchProblem {
 		@Override
 		public int priority() {
 			int heuristic = 0;
-			for (int i = 0; i < this.state.size(); i++) {
+			for (int i = 0; i < state.size(); i++) {
 				int xdist = goal.get(i).x - state.get(i).x;
 				int ydist = goal.get(i).y - state.get(i).y;
 				heuristic += Math.abs(xdist) + Math.abs(ydist);
@@ -136,11 +121,26 @@ public class MultiRobotSyncProblem extends UUSearchProblem {
 
 		@Override
 		public List<Point> getPoints() {
-			List<Point> list = new ArrayList<Point>();
+			List<Point> list = new ArrayList<>();
 			for (int i = 0; i < state.size(); i++) {
 				list.add(state.get(i));
 			}
 			return list;
+		}
+		
+		@Override
+		public String toString() {
+			String str = "{";
+			for (int i = 0; i < state.size(); i++) {
+				str += ("[" + state.get(i).x + ", " + state.get(i).y + "]");
+				if (i != state.size() - 1) {
+					str += " ";
+				}
+				else {
+					str += "}";
+				}
+			}
+			return str;
 		}
 		
 	}
